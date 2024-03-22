@@ -1,0 +1,118 @@
+ET search_path to schemanaam;
+
+--data types--
+char(nummer) 	--voor een string van nummer characters
+varchar(nummer) 	--voor een string met een maximale lengte van nummer
+integer		--voor een nummer van maximum 4 bytes
+smallint		--voor een nummer van maximum 2bytes
+date 			--voor een datum
+float			--voor een komagetal
+numeric(8,3)	--bv 12345,123 => 8 beduidende cijfers en 3 getallen achter de komma
+
+cast(tweedkolom as float)
+tweedekolom ::float -- doet hetzelfde als cast
+TO_CHAR(date,'1967-05-07', 'dd/mm/yyyy'); -- resultaat: '07/05/1967'
+TO_CHAR(date '1967-05-07', 'day dd month yyyy'); -- resultaat: 'sunday 07 may 1967'
+TO_CHAR(148.5, '9999.9999'); -- geeft: ' 148.5000'
+
+--wiskunde--
+*	+	-	/	sqrt(waarde)
+>	<	>=	<= 	=	
+<> of !=
+AND 	OR	NOT	
+
+--strings--
+lower()
+upper()
+substring(kolomnaam from 2)
+WHERE lower(naam) LIKE '_web%'
+%  		-- 0 of meerdere karakters;
+_ 		--juist 1 karakter
+
+--CASE--
+CASE 	WHEN condition THEN 'nieuwe waarde'
+	WHEN condition THEN 'middel waarde'
+	ELSE 'oudewaarde
+END
+
+--date--
+EXTRACT(year from kolomnaam) 
+now() --datum van vandaag
+
+--create--                           
+CREATE SCHEMA schemanaam --aanmaken van een schema
+--wanneer er spaties of hoofdleters in de schamanaam zitten worden er "Schema naam" 
+gebruikt, maar dit doen we liever niet 
+CREATE TABLE tabelnaam(
+eerstekolom 	char(10) NOT NULL,
+tweedekolom 	varchar(50),  
+derdekolom 		date NOT NULL,
+vierdekolom		smallint,
+constraint pk_tabelnaam_eerstekolom PRIMARY KEY ( eerstekolom )
+constraint fk_tabelnaam_tweedekolom FOREIGN KEY ( tweedekolom ) 
+	REFERENCES schemanaam.tabelnaam ( kolomnaam ) 
+);
+INSERT INTO tabelnaam(eerstekolom, tweedekolom, derdekolom, vierdekolom)
+VALUES('datapunten', 'die samen in een rij worden geplaatst', '30-12-2023', 1)
+
+--querys--
+--SELECT-- om tabelen te laten zien 
+SELECT *     	--selecteerd alle kolomen
+SELECT eerstekolom AS "dit is de eerste kolom", tweedekolom
+SELECT COUNT(*), AVG(tweedekolom), MAX(kolom), MIN(kolom), SUM(kolom)
+SELECT DISTINCT voornaam ||' '|| achternaam
+SELECT tabelnaam.kolomnaam
+--FROM--
+FROM tabelnaam
+FROM tabelnaam t, tabel2naam t2 	--geeft alle mogelijke combinaties
+FROM tabelnaam INNER JOIN tabel2naam on kolom1 = kolom2
+FROM tabelnaam INNER JOIN tabel2naam using(kolom)
+FROM tabelnaam RIGHT OUTER JOIN tabel2naam on kolom1=kolom2 LEFT OUTER JOIN tabel3naam kolom3=kolom4
+FROM tabelnaam t FULL OUTER tabel2 t2 naam on t.kolom1=t2.kolom2
+--WHERE--
+WHERE (vierdekolom = 1 AND derdekolom NOT '30-10-2023') OR tweedekolom IS NOT NULL
+WHERE tweedekolom is NULL
+WHERE NOT naam LIKE 'Web%'
+WHERE studiepunten BETWEEN 3 AND 8 
+WHERE coordinator IN ('u0012047','u0015584','u0024689','u0031447')
+--GROUP BY--
+GROUP BY tweedkolom
+--HAVING--
+HAVING COUNT(*)>10 --waar elke groep meer dan 10 rijen bevat
+--ORDER BY--
+ORDER BY vierdekolom ASC
+ORDER BY 2 DESC, vierdekolom
+--LIMIT--
+LIMIT 10 --geeft de eerste 10 rijen
+LIMIT 10 OFSET 5 --geeft 5de to 15de rij
+ORDER bij studiepunten 
+OFFSET 2
+FETCH FIRST 2 ROWS WITH TIES --geeft de rijen die hetzelfde aantal studiepunten heeft
+
+--SUBQUERY--
+ANY, ALL, IN
+SELECT *
+FROM student
+WHERE geboortedatum > ALL (
+	SELECT geboortedatum
+	FROM student
+	WHERE voornaam LIKE 'Al%')
+ORDER BY geboortedatum DES
+
+--DELETE-- 
+TRUNCATE tabelnaam--verwijderd alle inhoud
+DROP TABLE tabelnaam --verwijderd de voledige tabel
+DELETE --maak de query af om te kiezen welke rijen, met where bv
+FROM tabelnaam
+WHERE vierdekolom < 2 
+
+--UPDATE--
+UPDATE tabelnaam
+set tweedekolom = 'aangepast'
+WHERE vierdekolom = 1
+
+--rechten--
+GRANT USAGE on schema schemanaam to student, student2;
+GRANT select ON ALL TABLES IN SCHEMA schemanaam to student;
+GRANT ALL ON SCHEMA schemanaam TO student, student2;
+REVOKE all ON ALL TABLES IN SCHEMA schemanaam TO student;
