@@ -1,4 +1,4 @@
-ET search_path to schemanaam;
+SET search_path to schemanaam;
 
 --data types--
 char(nummer) 	--voor een string van nummer characters
