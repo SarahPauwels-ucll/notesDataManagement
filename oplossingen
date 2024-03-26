@@ -1,0 +1,16 @@
+recurtie:
+
+set search_path to ruimtereizen_voor_iedereen;
+
+WITH RECURSIVE maan(objectnaam, satellietvan, boom) AS (
+SELECT objectnaam, satellietvan, objectnaam::text
+FROM hemelobjecten
+WHERE satellietvan = 'Zon'
+UNION ALL
+SELECT h.objectnaam, h.satellietvan, boom  '-'  m.satellietvan
+FROM hemelobjecten h, maan m
+WHERE m.objectnaam = h.satellietvan
+)
+SELECT objectnaam, boom
+FROM maan
+ORDER BY objectnaam;
