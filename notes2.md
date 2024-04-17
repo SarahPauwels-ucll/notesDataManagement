@@ -13,7 +13,7 @@
 
 => transacties serieel verwerken, maar veel transacties moeten parrallel anders te veel wachten. 
 
-=> table locking: een bepaalde tabel word gelocked, opgepast voor deadlocking( é transacties die op elkaar wachten), dan word één transactie afgebroken.
+=> table locking: een bepaalde tabel word gelocked, opgepast voor deadlocking( 2 transacties die op elkaar wachten), dan word één transactie afgebroken.
 
 isolatie levels -> zie powerpoint.
 
