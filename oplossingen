@@ -14,3 +14,45 @@ WHERE m.objectnaam = h.satellietvan
 SELECT objectnaam, boom
 FROM maan
 ORDER BY objectnaam;
+
+
+
+15: ORDMS oef
+
+CREATE TYPE drank as(
+    naam varchar(30)
+)
+
+create table dranken of drank
+ (naam not null UNIQUE);
+
+create table bieren 
+(alcoholpercentage int)
+inherits (dranken);
+
+SELECT *
+FROM dranken;
+
+SELECT *
+FROM only dranken;
+
+SELECT *
+FROM bieren;
+
+CREATE OR REPLACE FUNCTION cast(dranken)
+RETURNS text AS
+$$
+DECLARE
+ result text;
+BEGIN
+ result= dranken.naam
+ RETURN result;
+END;
+$$
+LANGUAGE plpgsql;
+
+cast(dranken::dranken)
+
+pg_type_off
+
+
