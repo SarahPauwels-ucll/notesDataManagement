@@ -1,0 +1,117 @@
+--herhaling 1
+select teamnr, wedstrijdnr as laatstewedstrijd
+from boetes join spelers join bestuursleden join wedstrijden join teams
+order by teamnr
+
+select teams.teamnr, cast (EXTRACT(YEAR FROM age(geb_datum))AS varchar(2)) || ' jaar' as leeftijd, count(distinct wedstrijden.spelersnr) as aantalspelers
+from spelers inner join teams using(spelersnr) join wedstrijden using(teamnr)
+group by teams.teamnr, geb_datum
+order by leeftijd, aantalspelers, teams.teamnr
+
+elect spelersnr, max(wedstrijdnr) as laatstewedstrijd
+from bestuursleden inner join spelers using(spelersnr) inner join wedstrijden using(spelersnr) 
+full outer join boetes using(spelersnr)
+where functie is not null and eind_datum is null and bedrag is null
+group by spelersnr
+order by spelersnr desc
+
+select s.spelersnr, naam, voorletters, divisie, wedstrijdnr
+from spelers s inner join wedstrijden w on s.spelersnr=w.spelersnr inner join teams t on t.spelersnr=w.spelersnr
+where geslacht='M'
+order by wedstrijdnr desc
+
+select s.spelersnr, s.bondsnr
+from spelers s inner join spelers b on s.spelersnr= b.spelersnr
+where b.geb_datum > (select geb_datum from spelers where bondsnr ='8467')
+order by 1,2
+
+select naam
+from spelers s full outer join wedstrijden w on s.spelersnr= w.spelersnr
+where wedstrijdnr is null
+order by naam
+
+SELECT teams.teamnr, teams.divisie, wedstrijden.wedstrijdnr, wedstrijden.spelersnr, 
+CASE 
+WHEN bestuursleden.spelersnr IS NULL THEN '-'
+ELSE 'actief'
+END AS bestuurslid
+FROM teams
+LEFT OUTER JOIN wedstrijden ON teams.teamnr = wedstrijden.teamnr AND wedstrijden.verloren > wedstrijden.gewonnen
+LEFT OUTER JOIN bestuursleden ON wedstrijden.spelersnr = bestuursleden.spelersnr AND bestuursleden.eind_datum IS NULL
+ORDER BY divisie, wedstrijden.wedstrijdnr;
+
+select s.spelersnr, naam, plaats
+from SPELERS s left outer join BOETES b on b.SPELERSNR = s.SPELERSNR 
+where not plaats = 'Den Haag' and b.bedrag is null 
+order by jaartoe, spelersnr, naam, plaats
+
+select s.naam, s.geslacht, b.functie
+from spelers s left outer join bestuursleden b on b.spelersnr = s.spelersnr and b.eind_datum is null
+where s.naam LIKE'%e%e%' and s.geslacht = 'M' 
+order by naam, functie
+
+select l.FUNCTIE , b.BEDRAG 
+from BESTUURSLEDEN l left outer join SPELERS s on l.SPELERSNR= s.SPELERSNR  full outer join BOETES b on b.SPELERSNR = s.SPELERSNR 
+where l.eind_datum is null
+order by l.FUNCTIE , b.BEDRAG
+
+-- herhaling 2
+
+SELECT h.objectnaam,
+coalesce(h.afstand, 0) + coalesce(h2.afstand, 0) AS maximale_afstand,
+abs(coalesce(h2.afstand, 0) - coalesce(h.afstand, 0)) AS minimale_afstand
+FROM hemelobjecten h
+LEFT OUTER JOIN hemelobjecten h2 on h2.objectnaam = h.satellietvan 
+ORDER BY minimale_afstand, objectnaam;
+
+select objectnaam, diameter, max(verblijfsduur) as maximale_verblijf
+from hemelobjecten inner join bezoeken using(objectnaam)
+where objectnaam not in (select satellietvan from hemelobjecten group by satellietvan having count(satellietvan)>5 )
+group by objectnaam, diameter
+order by objectnaam
+
+select max(diameter) as grootstemaan
+from hemelobjecten left outer join bezoeken using(objectnaam)
+where satellietvan in (select objectnaam from hemelobjecten h where satellietvan = 'Zon') and reisnr is null
+			
+select min( extract (year from age(vertrekdatum, geboortedatum))) as jongsteleeftijd
+from reizen inner join deelnames using(reisnr) inner join klanten using(klantnr)
+			
+select h.objectnaam as planeet, he.objectnaam as maan
+from hemelobjecten he right outer join (select objectnaam from hemelobjecten h where satellietvan = 'Zon')
+as h on he.satellietvan= h.objectnaam
+order by planeet, maan
+
+select naam as klantnaam, geboortedatum
+from klanten inner join deelnames using(klantnr) inner join reizen using(reisnr)
+where extract(year from geboortedatum) + 45 = extract( year from vertrekdatum)
+group by klantnr, naam, geboortedatum
+order by geboortedatum asc
+
+select DISTINCT reisnr, count(distinct klantnr) as deelnemers
+from reizen left outer join deelnames using(reisnr)
+group by reisnr
+order by deelnemers desc, reisnr asc
+			
+select distinct reisnr, vertrekdatum
+from reizen full outer join bezoeken using(reisnr) 
+where objectnaam = 'Mars' or  objectnaam = 'Maan'
+order by vertrekdatum
+
+select naam, sum(prijs)
+from klanten inner join deelnames using(klantnr) left outer join reizen using(reisnr)
+where naam like 'G%s'
+group by klantnr,naam
+
+select objectnaam, avg(verblijfsduur)
+from bezoeken inner join hemelobjecten h using(objectnaam) 
+where satellietvan='Zon'
+group by objectnaam, satellietvan
+having avg(verblijfsduur)>2
+order by objectnaam
+			
+-- extra 1
+
+
+
+

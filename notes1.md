@@ -25,7 +25,7 @@ Muteren van gegevens example
     INSERT INTO bezoeken (reisnr,volgnr,objectnaam verblijfsduur) VALUES (34,4,'maan',2)
 
     UPDATE reizen
-    SET vertrekdatum =’2030-12-31’,reisduur = 30, prijs =1.23
+    SET vertrekdatum ='2030-12-31',reisduur = 30, prijs =1.23
     WHERE reisnr = 33;
 
     DELETE FROM  hemelobjecten
