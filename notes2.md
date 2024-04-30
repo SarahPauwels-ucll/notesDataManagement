@@ -4,6 +4,17 @@
     start transaction; sql code; rollback;
 
     start transaction; sql code; savepoint s1; sql code; rollback work to s1; commit;
+    savepoint s1
+    rollback work to savepoint s1
+
+    set transaction isolation level read uncommitted;
+    SHOW transaction_isolation;
+     READ UNCOMMITTED
+    | READ COMMITTED
+    | REPEATABLE READ
+    | SNAPSHOT
+    | SERIALIZABLE
+    SHOW default_transaction_isolation;
 
 * dirty read: gebruiker leest data die nooit gecommit is
 * nonreapeatable read:  de gebruiker leest andere data voor en na een commit (gegevens veranderd)

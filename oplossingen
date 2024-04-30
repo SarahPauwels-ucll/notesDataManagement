@@ -126,3 +126,12 @@ WHERE datum<=CURRENT_DATE - interval '10 days';
 $$ LANGUAGE 'sql';
 
 CALL ARCHIVE();
+
+
+
+SELECT user_administration.get_replication();
+
+
+CREATE SUBSCRIPTION mysub_r0875579
+ CONNECTION 'dbname=dataman host=fuji.ucll.be user=local_r0875579 port=52324 password=AThS!jk:SU03PMZg sslmode=require'
+ PUBLICATION dataman_pub;
