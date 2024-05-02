@@ -4,3 +4,5 @@ website: https://dataman.webontwerp.ucll.be/
 databank
 SELECT user_administration.set_session_svg('dataman','2TI3')
 "AThS!jk:SU03PMZg"
+
+wachtwoord pdf: dataman
