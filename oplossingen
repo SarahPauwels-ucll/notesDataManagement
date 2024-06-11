@@ -135,3 +135,79 @@ SELECT user_administration.get_replication();
 CREATE SUBSCRIPTION mysub_r0875579
  CONNECTION 'dbname=dataman host=fuji.ucll.be user=local_r0875579 port=52324 password=AThS!jk:SU03PMZg sslmode=require'
  PUBLICATION dataman_pub;
+
+
+1. Toon alle films gehuurd door Karen Jackson
+
+SET SEARCH_PATH TO pagila;
+
+-- Indien customer id, rental simpelweg joinen op het customer_id
+SELECT film.*
+FROM film
+INNER JOIN pagila.inventory ON film.film_id = inventory.film_id
+INNER JOIN pagila.rental ON inventory.inventory_id = rental.inventory_id
+INNER JOIN pagila.customer c on rental.customer_id = c.customer_id
+WHERE first_name = 'KAREN' AND last_name = 'JACKSON'
+
+
+2. Toon alle de acteurs die waarvan hun naam begint met dezelfde letter als de klant 13, toon ook enkel de acteurs die voorkomen in films die customer 13 gehuurt heeft
+
+SET SEARCH_PATH TO pagila;
+
+SELECT DISTINCT actor.*
+FROM actor
+INNER JOIN film_actor ON actor.actor_id = film_actor.actor_id
+INNER JOIN film ON film_actor.film_id = film.film_id
+INNER JOIN pagila.inventory ON film.film_id = inventory.film_id
+INNER JOIN pagila.rental ON inventory.inventory_id = rental.inventory_id AND rental.customer_id = 13
+WHERE LEFT(actor.last_name, 1) = 'J'
+
+3. Toon alle titels van films die Karen Jackson (klantnr 13) gehuurd heeft en hun afwijking tegenover de gemiddelde rent_rate van Karen Jacksons rentals
+SET SEARCH_PATH TO pagila;
+
+SELECT film.title, rental_duration - AVG(rental_duration) OVER()
+FROM film
+INNER JOIN pagila.inventory ON film.film_id = inventory.film_id
+INNER JOIN pagila.rental ON inventory.inventory_id = rental.inventory_id AND rental.customer_id = 13
+
+--jdfksjflksjf
+CREATE TABLE hjalp(
+eerstekolom char(10), 
+tweedekolom char(10),
+constraint pk_eerstekolom PRIMARY KEY (eerstekolom));
+
+INSERT INTO hjalp(eerstekolom, tweedekolom)
+VALUES('een', 'twee');
+
+CREATE VIEW hjelp(eerstekolom) AS
+    SELECT eerstekolom FROM hjalp;
+
+CREATE USER sarah;
+CREATE USER marthe;
+
+GRANT SELECT ON hjalp TO marthe;
+GRANT SELECT ON hjelp TO marthe;
+GRANT SELECT ON hjelp TO sarah;
+
+START TRANSACTION ;
+    SET ROLE sarah;
+    SELECT * FROM hjelp;
+ROLLBACK
+
+--jdflskjfeojflkjd
+select current_user;
+
+
+
+
+--see all views
+SET search_path TO r0938725;
+select schemaname, viewname, viewowner, definition
+
+from pg_views where schemaname = 'r0938725'
+
+union
+
+select schemaname, matviewname, matviewowner, definition
+
+from pg_matviews where schemaname = 'r0938725';
